@@ -160,9 +160,6 @@ output_keyword_files($config, $index, $touched);
 warn "Creating tagcloud...";
 output_tagcloud($config, $index);
 
-# rsync -arv --delete archives css img inc js /Library/WebServer/Documents/
-# rsync -arv --delete * web@cheetah.windley.net:/web/virt/new
-
 1;
 
 

@@ -304,30 +304,40 @@ sub output_archive_files {
 
   my $archives_inc_file = $config->{'target_home'}."/inc/".$config->{'includes'}->{'archives'};
   open(ARCHIVES, '>', $archives_inc_file);
+
   print ARCHIVES <<_EOF_;
-<div class="archive">
-   <h3>Archives</h3>
-  <ul class="nav nav-list">
+<!-- Button to trigger modal -->
+
+<li><a href="#ArchiveModal"   data-toggle="modal">Show Archives</a></li>
+<!-- Modal -->
+<div id="ArchiveModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div style="background-color: #6FA8DC; color: #FFFFFF" class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h1 id="myModalLabel">Archives</h1>
+  </div>
+  <div class="modal-body">
 _EOF_
 
-  my $insert = 1;
   foreach my $archive (reverse sort keys %{ $index->{'archives'} }) {
     my($year, $month) = split(/\|/, $archive);
     my $archive_link = "/$config->{'path_prefix'}/$year/$month/";
     my $mn = $month_name[$month-1];
-    if ($insert && $year eq $config->{'hide_archive_year'}) {
-      $insert = 0; # just do this once
-      print ARCHIVES <<_EOF_;
- <li ><a class="dropdown-toggle" data-toggle="dropdown" href="#">Older...<i class="caret"></i></a>
- <ul class="nav nav-pills dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-_EOF_
-    }
 
     print ARCHIVES <<_EOF_;
     <li><a tabindex="-1" href="$archive_link">$mn $year</a></li>
 _EOF_
   }
-  print ARCHIVES "</ul></li></ul></div>";
+
+  print ARCHIVES <<_EOF_;
+  </div>
+<!--
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+  </div>
+-->
+</div>
+_EOF_
+
   close(ARCHIVES);
 
   for my $arc (sort keys %{$touched->{'archives'}}) {
@@ -420,7 +430,7 @@ sub output_tagcloud {
   open(TAGCLOUD, '>', $tagcloud_inc_file);
   print TAGCLOUD <<_EOF_;
 <!-- Button to trigger modal -->
-<a href="#myModal" role="button" class="btn btn-large btn-info"  data-toggle="modal">Show Tag Cloud</a>
+<li><a href="#myModal"   data-toggle="modal">Show Tag Cloud</a></li>
 <!-- Modal -->
 <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div style="background-color: #6FA8DC; color: #FFFFFF" class="modal-header">
