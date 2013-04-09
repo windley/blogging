@@ -226,6 +226,7 @@ sub compute_meta {
   #    warn $meta->{'body'};
   # }
 
+  $meta->{'status'} = 'publish' unless(defined  $meta->{'status'});
 
   return $meta;
 }

@@ -17,6 +17,8 @@ use vars qw/ %opt /;
 my $opt_string = 'd:c:a';
 getopts( "$opt_string", \%opt ) or usage();
 
+die "No configuration file..." unless $opt{'c'};
+
 my $config = read_config($opt{'c'});
 
 my $entry_dir = "";
@@ -85,6 +87,7 @@ warn "Rebuilding entries";
 foreach my $f (@{$files}) {
 
   my ($meta) = make_blog_entry($f, $config);
+  next if($meta->{'status'} eq "draft");
 
   $index = index_entry($index, $meta);
 
