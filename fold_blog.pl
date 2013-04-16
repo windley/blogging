@@ -87,7 +87,15 @@ warn "Rebuilding entries";
 foreach my $f (@{$files}) {
 
   my ($meta) = make_blog_entry($f, $config);
-  next if($meta->{'status'} eq "draft");
+  if($meta->{'status'} eq "draft") {
+    warn "Skipping entry with timestamp $meta->{'timestamp'} because status is 'draft'";
+    next 
+  }
+
+  if(! $meta->{'filename'}) {
+    warn "Skipping entry with timestamp $meta->{'timestamp'} because filename is empty (check title)";
+    next 
+  }
 
   $index = index_entry($index, $meta);
 

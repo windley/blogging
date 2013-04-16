@@ -89,6 +89,8 @@ sub make_blog_entry {
 
   my $meta = compute_meta($entry_file, $config);
 
+#  warn $meta->{'status'}, " ", $meta->{'timestamp'} if $meta->{'status'} eq 'draft';
+
   #print Dumper($meta);
   my $result = $config->{'individual_entry_template_file'}->fill_in(HASH => $meta);
   
@@ -227,6 +229,7 @@ sub compute_meta {
   # }
 
   $meta->{'status'} = 'publish' unless(defined  $meta->{'status'});
+  $meta->{'status'} =~ s/[\s\r\n]+//g;
 
   return $meta;
 }
