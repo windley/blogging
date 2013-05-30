@@ -167,6 +167,8 @@ sub compute_meta {
 
   close(ENTRY);
 
+  warn "$entry_file produced empty meta" unless $meta->{'title'};
+
   chomp($meta->{'title'});
 
 
@@ -304,9 +306,11 @@ sub make_excerpt {
 
 
 sub output_archive_files {
-  my($config, $index, $touched) = @_;
+  my($config, $index, $touched, $verbose) = @_;
 
   my $archives_inc_file = $config->{'target_home'}."/inc/".$config->{'includes'}->{'archives'};
+
+  print "Processing archive file $archives_inc_file\n" if $verbose;
   open(ARCHIVES, '>', $archives_inc_file);
 
   print ARCHIVES <<_EOF_;
@@ -345,7 +349,7 @@ _EOF_
   close(ARCHIVES);
 
   for my $arc (sort keys %{$touched->{'archives'}}) {
-#    warn "updating $arc";
+    warn "updating $arc" if $verbose;
 
     my($year, $month) = split(/\|/, $arc);
     my $archive_file = $config->{'target_home'}."/$config->{'path_prefix'}/$year/$month/index.".$config->{'extension'};

@@ -14,7 +14,7 @@ use Blog qw/ :all /;
 
 # global options
 use vars qw/ %opt /;
-my $opt_string = 'd:c:a';
+my $opt_string = 'd:c:av';
 getopts( "$opt_string", \%opt ) or usage();
 
 die "No configuration file..." unless $opt{'c'};
@@ -27,6 +27,8 @@ if ($opt{'d'} ) {
 } else {
     $entry_dir = $config->{'entry_dir'};
 }
+
+my $verbose = $opt{'v'};
 
 my $homepage_file = $config->{'target_home'}."/index.".$config->{'extension'};
 my $rss_file = $config->{'target_home'}."/".$config->{'rss_file'};
@@ -58,7 +60,8 @@ my $index = read_index($index_file);
 
 my($files);
 
-find( sub{-f $_ and unshift @{ $files}, $File::Find::name;
+# get all the files that are html of md files
+find( sub{-f $_ and /(html|md)$/s and unshift @{ $files}, $File::Find::name;
          }, $entry_dir );
 
 
@@ -85,6 +88,8 @@ my $touched = {};
 
 warn "Rebuilding entries";
 foreach my $f (@{$files}) {
+
+  print "Processing $f\n" if $verbose;
 
   my ($meta) = make_blog_entry($f, $config);
   if($meta->{'status'} eq "draft") {
@@ -163,13 +168,13 @@ close(RSS);
 
 # do archives (creates multiple files including inc file)
 warn "Processing archive files...";
-output_archive_files($config, $index, $touched);
+output_archive_files($config, $index, $touched, $verbose);
 
 warn "Processing keyword files...";
-output_keyword_files($config, $index, $touched);
+output_keyword_files($config, $index, $touched, $verbose);
 
 warn "Creating tagcloud...";
-output_tagcloud($config, $index);
+output_tagcloud($config, $index, $verbose);
 
 1;
 
