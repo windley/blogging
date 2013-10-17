@@ -12,6 +12,7 @@ use File::Path qw/make_path rmtree/;
 use HTML::Strip;
 use HTML::Entities;
 use HTML::TagCloud;
+use POSIX qw(strftime);
 use Data::Dumper;
 $Data::Dumper::Indent = 1;
 
@@ -131,6 +132,8 @@ sub compute_meta {
 
   $meta->{'mtime'} = (stat(ENTRY))[9];
   $meta->{'timestamp'} = localtime($meta->{'mtime'});
+  $meta->{'rfc822_time'} = strftime("%a, %d %b %Y %H:%M:%S %z", $meta->{'mtime'});
+
 
   my $ext = ".".$config->{'extension'};
   my $path_prefix = "/".$config->{'path_prefix'};
