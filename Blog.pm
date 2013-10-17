@@ -192,6 +192,12 @@ sub compute_meta {
   $meta->{'excerpt'} =~ s/\s*$//g;
   $meta->{'excerpt'} =~ s/\\n//g; # some got an escaped newline
 
+  # want it to be empty if it's empty
+  if (defined $meta->{'postimage'}) {
+    $meta->{'postimage'} =~ s/\s*$//g;
+    $meta->{'postimage'} =~ s/\\n//g; # some got an escaped newline
+  }
+
 
   $meta->{'keywords'} =~ s/[\s\r\n]+//g;
   $meta->{'keywords'} =~ s/\\n//g; # some got an escaped newline
@@ -314,16 +320,13 @@ sub output_archive_files {
   open(ARCHIVES, '>', $archives_inc_file);
 
   print ARCHIVES <<_EOF_;
-<!-- Button to trigger modal -->
-
-<li><a href="#ArchiveModal"   data-toggle="modal">Show Archives</a></li>
 <!-- Modal -->
-<div id="ArchiveModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="ArchiveModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="ArchiveModalLabel" aria-hidden="true">
   <div style="background-color: #6FA8DC; color: #FFFFFF" class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h1 id="myModalLabel">Archives</h1>
+    <h1 id="ArchiveModalLabel">Archives</h1>
   </div>
-  <div class="modal-body">
+  <div class="modal-body"><ul>
 _EOF_
 
   foreach my $archive (reverse sort keys %{ $index->{'archives'} }) {
@@ -337,6 +340,7 @@ _EOF_
   }
 
   print ARCHIVES <<_EOF_;
+  </ul>
   </div>
 <!--
   <div class="modal-footer">
@@ -437,13 +441,11 @@ sub output_tagcloud {
   my $tagcloud_inc_file = $config->{'target_home'}."/inc/".$config->{'includes'}->{'tagcloud'};
   open(TAGCLOUD, '>', $tagcloud_inc_file);
   print TAGCLOUD <<_EOF_;
-<!-- Button to trigger modal -->
-<li><a href="#myModal"   data-toggle="modal">Show Tag Cloud</a></li>
 <!-- Modal -->
-<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="TagModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="TagModalLabel" aria-hidden="true">
   <div style="background-color: #6FA8DC; color: #FFFFFF" class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h1 id="myModalLabel">Top $config->{'tagcloud_entries'} Tags</h1>
+    <h1 id="TagModalLabel">Top $config->{'tagcloud_entries'} Tags</h1>
   </div>
   <div class="modal-body">
 _EOF_

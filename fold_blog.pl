@@ -106,7 +106,7 @@ foreach my $f (@{$files}) {
 
   # using mtime for homepage as indication of what needs updating
   if ($meta->{'mtime'} > $homepage_mtime || $opt{'a'}) {
-    # warn $f;
+    warn "Generating page" if $verbose;
     output_blog_file($config, $meta);
 
     foreach my $kw (split(/,\s*/,$meta->{'keywords'})) {
@@ -114,6 +114,8 @@ foreach my $f (@{$files}) {
     }
 
     $touched->{'archives'}->{$meta->{'archive'}} = 1;
+  } else {
+        warn "Not generating page since $meta->{'mtime'} <= $homepage_mtime" if $verbose;
   }
 
   if ($entry_count < $config->{'homepage_entries'}) {
