@@ -9,6 +9,7 @@ use Getopt::Std;
 use File::Find;
 use File::Path qw/make_path rmtree/;
 use Data::Dumper;
+use POSIX qw(strftime);
 
 use Blog qw/ :all /;
 
@@ -82,7 +83,7 @@ my $rss_meta = {
     'blog_author' => $config->{'blog_author'},
     'blog_description' => $config->{'blog_description'},
     'year' => (localtime())[5] + 1900,
-    'build_date' => scalar(localtime()),
+    'build_date' => strftime("%a, %d %b %Y %H:%M:%S %z", localtime()),
 };
 my $touched = {};
 

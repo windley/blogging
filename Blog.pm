@@ -132,7 +132,7 @@ sub compute_meta {
 
   $meta->{'mtime'} = (stat(ENTRY))[9];
   $meta->{'timestamp'} = localtime($meta->{'mtime'});
-  $meta->{'rfc822_time'} = strftime("%a, %d %b %Y %H:%M:%S %z", $meta->{'mtime'});
+  $meta->{'rfc822_time'} = strftime("%a, %d %b %Y %H:%M:%S %z", localtime($meta->{'mtime'}));
 
 
   my $ext = ".".$config->{'extension'};
