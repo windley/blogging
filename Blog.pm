@@ -53,11 +53,11 @@ sub read_config {
 
     $filename ||= DEFAULT_CONFIG_FILE;
 
-#    print "File ", $filename;
+    #    print "File ", $filename;
     my $config;
     if ( -e $filename ) {
-      $config = YAML::XS::LoadFile($filename) ||
-	warn "Can't open configuration file $filename: $!";
+	$config = YAML::XS::LoadFile($filename) ||
+	  warn "Can't open configuration file $filename: $!";
     }
 
     my $base_dir = $config->{'base_dir'}.$config->{'blog_id'};
@@ -67,19 +67,19 @@ sub read_config {
 
     $config->{'individual_entry_template_file'} = 
       Text::Template->new(SOURCE => $config->{'template_dir'}.$config->{'templates'}->{'individual_entry'})
-	  or die "Couldn't construct template: $Text::Template::ERROR";
+	or die "Couldn't construct template: $Text::Template::ERROR";
     $config->{'homepage_template_file'} = 
       Text::Template->new(SOURCE => $config->{'template_dir'}.$config->{'templates'}->{'homepage'})
-	  or die "Couldn't construct template: $Text::Template::ERROR";
+	or die "Couldn't construct template: $Text::Template::ERROR";
     $config->{'rss_template_file'} = 
       Text::Template->new(SOURCE => $config->{'template_dir'}.$config->{'templates'}->{'rss'})
-	  or die "Couldn't construct template: $Text::Template::ERROR";
+	or die "Couldn't construct template: $Text::Template::ERROR";
     $config->{'archive_template_file'} = 
       Text::Template->new(SOURCE => $config->{'template_dir'}.$config->{'templates'}->{'archive'})
-	  or die "Couldn't construct template: $Text::Template::ERROR";
+	or die "Couldn't construct template: $Text::Template::ERROR";
     $config->{'keyword_template_file'} = 
       Text::Template->new(SOURCE => $config->{'template_dir'}.$config->{'templates'}->{'keyword'})
-	  or die "Couldn't construct template: $Text::Template::ERROR";
+	or die "Couldn't construct template: $Text::Template::ERROR"; 
 
     return $config;
 }
@@ -188,12 +188,15 @@ sub compute_meta {
     $meta->{'filename'} = $meta->{'base_name'}.$ext;
   }
 
+  
+
   # some excerpts have newlines that should be spaces
   $meta->{'excerpt'} =~ s/[\r\n]+/ /g;
 
   # want it to be empty if it's empty
   $meta->{'excerpt'} =~ s/\s*$//g;
   $meta->{'excerpt'} =~ s/\\n//g; # some got an escaped newline
+
 
   # want it to be empty if it's empty
   if (defined $meta->{'postimage'}) {

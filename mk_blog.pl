@@ -17,7 +17,7 @@ my $config = read_config($opt{'c'});
 my $entry_file = "";
 if ($opt{'f'} ) {
     $entry_file = $opt{'f'} ;
-#    print "$entry_dir$entry_file\n"; 
+    #    print "$entry_dir$entry_file\n"; 
 } else {
     die "You must specify an entry_file\n";
 }
