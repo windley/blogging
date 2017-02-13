@@ -7,6 +7,4 @@ I've recently added ability to sync with AWS using the AWS CLI tool. Here's some
 
 - [PIP is a pre-requisite](http://stackoverflow.com/questions/17271319/how-to-install-pip-on-mac-os-x)
 - [Installing AWS CLI](http://docs.aws.amazon.com/cli/latest/userguide/installing.html)
-- [Syncing with AWS sync](http://docs.aws.amazon.com/cli/latest/userguide/using-s3-commands.html
-
-)
+- [Syncing with AWS sync](http://docs.aws.amazon.com/cli/latest/userguide/using-s3-commands.html)
