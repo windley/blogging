@@ -9,11 +9,14 @@ use YAML::XS;
 use Date::Parse;
 use File::Find;
 use File::Path qw/make_path rmtree/;
+use File::Basename qw/dirname/;
+use File::Copy::Recursive qw/rcopy/;
 use HTML::Strip;
 use HTML::Entities;
 use HTML::TagCloud;
 use POSIX qw(strftime);
 use Data::Dumper;
+use DateTime;
 $Data::Dumper::Indent = 1;
 
 use utf8;
@@ -109,9 +112,18 @@ sub output_blog_file {
   # make sure directory exists
   my $directory = $config->{'target_home'}.$meta->{'entry_dir'};
   unless (-d $directory ) {
-    make_path($directory);
+      make_path($directory);
   }
 
+#  warn "Dir name: ", $meta->{"dirname"}, "\n", "Target: ", $directory, "\n"    ;
+  
+  my @aux_files = glob("$meta->{'dirname'}/*");
+  foreach my $f (@aux_files) {
+      rcopy($f, $directory) unless $f =~ /(html|md)$/s;
+  }
+  
+#  warn Dumper \@aux_files;
+  
   open(OUT, '>', $directory.$meta->{'filename'});
   print OUT $meta->{'result'};
   close(OUT);
@@ -121,6 +133,7 @@ sub output_blog_file {
 sub compute_meta {
   my($entry_file, $config) = @_;
   my $meta = {'blog_url' => $config->{'blog_url'},
+	      'dirname' => dirname($entry_file)
 	     };
 
 
@@ -137,6 +150,7 @@ sub compute_meta {
 
   my $ext = ".".$config->{'extension'};
   my $path_prefix = "/".$config->{'path_prefix'};
+#  my $path_prefix = $config->{'path_prefix'};
 
   while ($line = <ENTRY>) {
     #  print "$line";
@@ -211,6 +225,12 @@ sub compute_meta {
   $meta->{'keywords'} = lc($meta->{'keywords'}); # make all keywords lowercase
 
 
+  if ($meta->{"author_url"}) {
+      $meta->{'author_url'} =~ s/\s*$//g;
+      $meta->{'author_url'} =~ s/[\r\n]+/ /g;
+  }
+
+
   $meta->{'body'} =~ s/\222/'/g;
   $meta->{'body'} =~ s/[\223\224]/"/g;
   $meta->{'body'} =~ s/\227/--/g;
@@ -224,6 +244,8 @@ sub compute_meta {
   }
 
   $meta->{'time'} = str2time($meta->{'date'});
+  # cheating here and assuming MST
+  $meta->{'datetime'} = DateTime->from_epoch(epoch=>$meta->{"time"})->datetime()."+0600";
 
   #  warn $meta->{'timestamp'};
 
@@ -376,6 +398,7 @@ _EOF_
       unshift(@{ $archive_meta->{'entries'} }, $index->{$url});
     }
 
+#    warn Dumper $archive_meta;
     $archive_meta->{'count'} = scalar (@{ $archive_meta->{'entries'} });
 
     my $archive = $config->{'archive_template_file'}->fill_in(HASH => $archive_meta);

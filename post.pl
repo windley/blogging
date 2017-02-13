@@ -26,6 +26,7 @@ my $config = read_config($config_file);
 
 
 my $dest = $config->{'blog_destination'};
+my $bucket = $config->{'s3_bucket'};
 
 
 my @fold_cmd = ("$fold_dir/fold_blog.pl");
@@ -40,10 +41,26 @@ system($cmd) == 0 || die "Could not execute fold_blog.pl, $?";
 
 my @rsync_cmd = ("rsync", "-arv", "--delete", "$blogging_dir/$blog_dir_name/*", $dest);
 
+
 $cmd = join(" ", @rsync_cmd);
 
 system($cmd) == 0 || die "Could not execute rsync, $?";
- 
+
+## AWS
+my @aws_sync_cmd = ("aws", "s3", "sync", "$blogging_dir/$blog_dir_name", "s3://$bucket", "--delete", " --acl public-read");
+
+my @all_but_shtml = ("--exclude='.git/*' --exclude='*.shtml'");
+my @just_shtml = ("--exclude '*' --include '*.shtml' --no-guess-mime-type --content-type text/html");
+
+
+
+$cmd = join(" ", @aws_sync_cmd, @all_but_shtml);
+system($cmd) == 0 || die "Could not execute AWS sync, $?";
+
+$cmd = join(" ", @aws_sync_cmd, @just_shtml);
+system($cmd) == 0 || die "Could not execute AWS sync for shtml, $?";
+
+
 
 1;
 

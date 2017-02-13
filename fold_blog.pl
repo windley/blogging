@@ -66,6 +66,8 @@ find( sub{-f $_ and /(html|md)$/s and unshift @{ $files}, $File::Find::name;
          }, $entry_dir );
 
 
+$config->{'blog_url'} =~ s[/$][];
+
 my $entry_count = 0;
 my $homepage_meta = {
     'entries' => [],
@@ -75,7 +77,8 @@ my $homepage_meta = {
     'blog_description' => $config->{'blog_description'},
     'year' => (localtime())[5] + 1900,
     'build_date' => scalar(localtime()),
-};
+    };
+
 my $rss_meta = {
     'entries' => [],
     'blog_url' => $config->{'blog_url'},
@@ -143,6 +146,7 @@ _EOF_
 
 my $recent_count = 0;
 foreach my $entry (@{ $homepage_meta->{'entries'} }) {
+#    warn $entry->{entry_url};
    print RECENTS "  <li><a href='$entry->{entry_url}'>$entry->{title}</a></li>\n";
    $recent_count++;
    last if ($recent_count > $config->{'recent_entries'});

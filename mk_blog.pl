@@ -14,10 +14,11 @@ getopts( "$opt_string", \%opt ) or usage();
 
 my $config = read_config($opt{'c'});
 
+my $entry_dir = $config->{"entry_dir"};
 my $entry_file = "";
 if ($opt{'f'} ) {
     $entry_file = $opt{'f'} ;
-    #    print "$entry_dir$entry_file\n"; 
+        print "$entry_dir$entry_file\n"; 
 } else {
     die "You must specify an entry_file\n";
 }
@@ -26,7 +27,7 @@ my $complete_filename = $config->{'entry_dir'}.$entry_file;
 my ($result, $meta) = make_blog_entry($complete_filename, $config);
 
 if ($opt{p}) { 
-  print $result 
+  print $result->{"result"};
 } else {
 
   output_blog_file($result, $config, $meta);
@@ -52,7 +53,8 @@ usage: $0 [-h?c] -f individual_entry
  -c config  : configuration file
  -p         : print result instead of saving
 
-example: $0 -f "2013/02/23/131456.html"
+example: $0 -p -c ~/Documents/blogging/tm/config.yml -f 2016/02/22/tm-102306.html
+
 
 EOF
     exit;
