@@ -94,6 +94,7 @@ sub make_blog_entry {
   my $meta = compute_meta($entry_file, $config);
 
 #  warn $meta->{'status'}, " ", $meta->{'timestamp'} if $meta->{'status'} eq 'draft';
+  warn ">>>>Image url: ". $meta->{'postimage'} . "\n";
 
   #print Dumper($meta);
   my $result = $config->{'individual_entry_template_file'}->fill_in(HASH => $meta);
@@ -210,14 +211,7 @@ sub compute_meta {
   # want it to be empty if it's empty
   $meta->{'excerpt'} =~ s/\s*$//g;
   $meta->{'excerpt'} =~ s/\\n//g; # some got an escaped newline
-
-
-  # want it to be empty if it's empty
-  if (defined $meta->{'postimage'}) {
-    $meta->{'postimage'} =~ s/\s*$//g;
-    $meta->{'postimage'} =~ s/\\n//g; # some got an escaped newline
-  }
-
+ 
 
   $meta->{'keywords'} =~ s/[\s\r\n]+//g;
   $meta->{'keywords'} =~ s/\\n//g; # some got an escaped newline
@@ -258,7 +252,21 @@ sub compute_meta {
   $meta->{'entry_dir'} = "$path_prefix/$year/$month/";
   $meta->{'archive'} = "$year|$month";
   $meta->{'entry_url'} = $meta->{'entry_dir'} . $meta->{'filename'};
-#  warn $meta->{'entry_url'};
+  #  warn $meta->{'entry_url'};
+
+
+  # want it to be empty if it's empty
+  if (defined $meta->{'postimage'}) {
+      $meta->{'postimage'} =~ s/\s*$//g;
+      $meta->{'postimage'} =~ s/\\n//g; # some got an escaped newline
+      if($meta->{'postimage'} !~ m/^http/) {
+          my $image_url = $meta->{'blog_url'} .$meta->{'entry_dir'} . $meta->{'postimage'};
+          #warn ">>>>Image url: ". $image_url . "\n";
+          $meta->{'postimage'} = $image_url;
+      }
+  }
+  warn ">>>>Image url: ". $meta->{'postimage'} . "\n";
+
 
   # if ($meta->{'entry_url'} eq "/archives/2002/06/egovernment_on.shtml") {
   #    warn $meta->{'body'};

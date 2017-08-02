@@ -24,7 +24,7 @@ my $fold_dir = "$home_dir/prog/perl/blog";
 
 my $config = read_config($config_file);
 
-
+my $aws_creds = $config->{'aws_creds'};
 my $dest = $config->{'blog_destination'};
 my $bucket = $config->{'s3_bucket'};
 
@@ -39,10 +39,12 @@ my $cmd = join(" ", @fold_cmd);
 
 system($cmd) == 0 || die "Could not execute fold_blog.pl, $?";
 
-my @rsync_cmd = ("rsync", "-arv", "--delete", "$blogging_dir/$blog_dir_name/*", $dest);
+my @rsync_cmd = ("rsync", "-arve", "'ssh -i", $aws_creds, "'", "--delete", "$blogging_dir/$blog_dir_name/*", $dest);
 
 
 $cmd = join(" ", @rsync_cmd);
+
+#print $cmd, "\n";
 
 system($cmd) == 0 || die "Could not execute rsync, $?";
 
