@@ -94,7 +94,7 @@ sub make_blog_entry {
   my $meta = compute_meta($entry_file, $config);
 
 #  warn $meta->{'status'}, " ", $meta->{'timestamp'} if $meta->{'status'} eq 'draft';
-  warn ">>>>Image url: ". $meta->{'postimage'} . "\n";
+#  warn ">>>>Image url: ". $meta->{'postimage'} . "\n";
 
   #print Dumper($meta);
   my $result = $config->{'individual_entry_template_file'}->fill_in(HASH => $meta);
@@ -265,7 +265,7 @@ sub compute_meta {
           $meta->{'postimage'} = $image_url;
       }
   }
-  warn ">>>>Image url: ". $meta->{'postimage'} . "\n";
+#  warn ">>>>Image url: ". $meta->{'postimage'} . "\n";
 
 
   # if ($meta->{'entry_url'} eq "/archives/2002/06/egovernment_on.shtml") {
@@ -285,7 +285,7 @@ sub read_index {
     my $index;
     if ( -e $filename ) {
       $index = YAML::XS::LoadFile($filename) ||
-	warn "Can't open index file $filename: $!";
+      warn "Can't open index file $filename: $!";
     }
 
     return $index;

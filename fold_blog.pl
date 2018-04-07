@@ -56,15 +56,23 @@ if (-e $homepage_file) {
   $homepage_mtime = 0;
 }
 
+# warn "Homepage mtime for $homepage_file: $homepage_mtime \n";
+
 my $index = read_index($index_file);
 
 
 my($files);
 
 # get all the files that are html of md files
-find( sub{-f $_ and /(html|md)$/s and unshift @{ $files}, $File::Find::name;
-         }, $entry_dir );
+find( \&wanted, $entry_dir );
 
+sub wanted
+{
+    push(@{ $files }, $File::Find::name) if($File::Find::name=~m/\.(html|md)$/i);
+}
+
+$files = [sort {$b cmp $a} @{ $files }];
+# warn join(", ", sort @{$files});
 
 $config->{'blog_url'} =~ s[/$][];
 
@@ -123,6 +131,7 @@ foreach my $f (@{$files}) {
   }
 
   if ($entry_count < $config->{'homepage_entries'}) {
+    warn "Adding $meta->{'timestamp'} to homepage...\n";
     push(@{ $homepage_meta->{'entries'} }, $meta);
     push(@{ $rss_meta->{'entries'} }, $meta);
   } else {
