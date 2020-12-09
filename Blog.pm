@@ -142,10 +142,11 @@ sub compute_meta {
   my $in_meta = 0;
   my $meta_type = "";
   my $line;
-  open(ENTRY,$entry_file) or die $!;
+  open(ENTRY,$entry_file) or die "$!: $entry_file";
 
   $meta->{'mtime'} = (stat(ENTRY))[9];
   $meta->{'timestamp'} = localtime($meta->{'mtime'});
+  $meta->{'modified_timestamp'} = localtime($meta->{'mtime'}); # cause timestamp gets updated below
   $meta->{'rfc822_time'} = strftime("%a, %d %b %Y %H:%M:%S %z", localtime($meta->{'mtime'}));
 
 
@@ -170,9 +171,9 @@ sub compute_meta {
       ($meta_type = $line) =~ s/<!--\s+(\w+):.*$/$1/s;
 
       if ($line =~ m/-->/) {
-	(my $content = $line) =~ s/^.*:\s+(.*)\s+-->$/$1/s;
-	$meta->{$meta_type} .= $content;
-	$in_meta = 0;
+          (my $content = $line) =~ s/^.*:\s+(.*)\s+-->$/$1/s;
+          $meta->{$meta_type} .= $content;
+          $in_meta = 0;
       }
     
     } else {
@@ -188,6 +189,7 @@ sub compute_meta {
   warn "$entry_file produced empty meta" unless $meta->{'title'};
 
   chomp($meta->{'title'});
+  $meta->{'title'} =~ s/^\s+//;
 
 
   # compute the filename

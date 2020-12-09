@@ -5,6 +5,8 @@ use strict;
 
 use Getopt::Std;
 
+use lib '/Users/pjw/prog/perl/blog';
+
 use Blog qw/ :all /;
 
 
